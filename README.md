@@ -20,7 +20,7 @@ Cloud Services: AWS S3, EC2, Lambda, API Gateway
 
 Models: Titan Multimodal Embeddings, Claude 3 Sonnet
 
-## **Folder Structure**
+# **Folder Structure**
 
 ![image](./docs/reference-images/readme/folder_struct.png)
 
@@ -31,7 +31,7 @@ Models: Titan Multimodal Embeddings, Claude 3 Sonnet
 - `docs/`: Architecture references and reports for technical planning.
 - `venv/`: Local virtual environment (excluded from deployment builds).
 
-## **Data Description**
+# **Data Description**
 
 - `data/menu_descriptions_data.csv`: Cleaned textual descriptions for each recipe, including flavor notes, dietary tags, and serving metadata.
 - `data/restaurants_menu_data.csv`: Structured menu information that links restaurant, recipe, price, and category details.
@@ -40,7 +40,7 @@ Models: Titan Multimodal Embeddings, Claude 3 Sonnet
 # **Architecture Diagram**
 ![image](./docs/reference-images/notebook/architecture.png)
 
-# **Architecture Diagram**
+# **UI**
 ![image](./docs/reference-images/readme/ui.png)
 
 
@@ -335,3 +335,6 @@ To terminate the nohup process:
   - `ps -df`
   - `kill {process id}`
 
+# **Contact Info:
+Reach out at divyansh.agarwal@ufl.edu | 
+LinkedIn: [Click here](https://www.linkedin.com/in/divyanshag14)
