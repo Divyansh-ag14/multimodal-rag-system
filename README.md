@@ -20,8 +20,28 @@ Cloud Services: AWS S3, EC2, Lambda, API Gateway
 
 Models: Titan Multimodal Embeddings, Claude 3 Sonnet
 
+## **Folder Structure**
+
+![image](./docs/reference-images/readme/folder_struct.png)
+
+- `src/`: Streamlit user interface, orchestration logic, and utility helpers.
+- `data/`: Sample restaurant menus, recipe descriptions, and associated food images used to seed the vector store.
+- `notebooks/`: Experimentation notebooks for embedding, retrieval, and RAG workflow prototyping.
+- `output/`: Generated artifacts such as the serialized FAISS index and metadata pickle.
+- `docs/`: Architecture references and reports for technical planning.
+- `venv/`: Local virtual environment (excluded from deployment builds).
+
+## **Data Description**
+
+- `data/menu_descriptions_data.csv`: Cleaned textual descriptions for each recipe, including flavor notes, dietary tags, and serving metadata.
+- `data/restaurants_menu_data.csv`: Structured menu information that links restaurant, recipe, price, and category details.
+- `data/images/R00X/*.png`: Five representative food images per recipe, used to train and evaluate multimodal retrieval (e.g., `R001M001.png` corresponds to recipe `R001`).
+
 # **Architecture Diagram**
 ![image](./docs/reference-images/notebook/architecture.png)
+
+# **Architecture Diagram**
+![image](./docs/reference-images/readme/ui.png)
 
 
 # **Execution Instructions**
