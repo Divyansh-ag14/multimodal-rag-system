@@ -1,29 +1,138 @@
-# **Project Description**
+## Multimodal Food Recommendation RAG System
 This project implements a Multimodal Retrieval-Augmented Generation (RAG) pipeline for personalized food and recipe recommendations.
 Unlike traditional text-only recommenders, this system jointly processes recipe descriptions and food images to understand both semantic and visual cues—helping users find dishes that match their taste, dietary goals, and visual preferences.
 
-# **Core Features**
+### Current Version: Deliverable 3 (Refined Prototype)
 
-1. Multimodal Retrieval: Uses joint embeddings for text and images to find semantically and visually aligned recipes.
-2. Conversational RAG Engine: Natural-language interaction powered by Amazon Bedrock (Titan Embeddings + Claude 3 Sonnet).
-3. Vector Search with FAISS: High-speed similarity search for efficient recipe retrieval.
-4. Streamlit UI: Chat-based interface with interactive recipe cards, AI rationales, and visual explanations.
-5. AWS Architecture: Integrates S3, EC2, Lambda, and API Gateway for a scalable, serverless deployment.
+## Deliverable 2: Evolution & Refinements
+For Deliverable 2, the codebase underwent a significant refactoring to transition from a proof-of-concept to a robust application. Below is a comparison of the improvements made between the initial and refined versions.
 
-# **Tech Stack**
+### 1. Architecture Evolution
 
-Languages: Python
+#### Previous Architecture (Deliverable 2)
+The initial system followed a **linear pipeline**:
 
-Frameworks: Streamlit, AWS Bedrock, FAISS
 
-Cloud Services: AWS S3, EC2, Lambda, API Gateway
+- Each query was processed independently.  
+- No conversation memory or state awareness.  
+- Minimal error handling and no retry strategies.
 
-Models: Titan Multimodal Embeddings, Claude 3 Sonnet
+---
 
-# **Folder Structure**
+#### Current Architecture (Deliverable 3)
+The updated architecture introduces a **cyclic, context-aware pipeline**:
 
-![image](./docs/reference-images/readme/folder_struct.png)
+- **Memory Module**  
+  Injects conversation history into the LLM prompt, enabling follow-up questions and contextual reasoning.
 
+- **Resilience Layer**  
+  Adds error-handling logic, retry flows, and protection against API instability.
+
+---
+
+### Architecture Diagrams
+
+#### Deliverable 2 — Linear Architecture
+![D1 Architecture](/docs/reference-images/notebook/architecture.png)
+
+#### Deliverable 3 — Cyclic Architecture with Memory
+![D2 Architecture](/docs/reference-images/readme/updated_architecture.png)
+
+
+### 2. Codebase Improvements
+
+The codebase evolved significantly from Deliverable 1 to Deliverable 2, focusing on reliability, modularity, and contextual intelligence.
+
+### Comparison of Key Features
+
+| **Feature**        | **Original (utils.py / app.py)** | **Improved (utils_improved.py / app_improved.py)** |
+|--------------------|-----------------------------------|-----------------------------------------------------|
+| **Error Handling** | None. API failures crashed the app. | **Exponential Backoff:** Added `_retry_llm_call` decorator that retries failed API requests with 1s → 2s → 4s delays. |
+| **Memory**         | Stateless. Forgot previous turns immediately. | **Context Window:** Injects `format_conversation_history` into prompts, enabling follow-up reasoning and comparisons (e.g., “Which option is cheaper?”). |
+| **Configuration**  | Hardcoded paths and model IDs embedded in file logic. | **Modular Config:** Introduced `config.py` to centralize Model IDs, Retry Limits, and Search Parameters. |
+| **Input Validation** | Minimal validation. | **Strict Validation:** Validates file types, enforces image size limits, and sanitizes text inputs to prevent malformed prompts and runtime errors. |
+
+### 3. User Interface Overhaul
+
+### Before (Deliverable 3)
+The interface used default Streamlit chat widgets:
+
+- Plain text responses  
+- Simple image outputs  
+- No branding, no structure  
+- Minimal interactivity  
+
+### After (Deliverable 3)
+A fully redesigned UI with a polished, branded experience:
+
+- **Custom CSS Theme:** Colors, typography, spacing, and card shadows  
+- **Interactive Recommendation Cards:**  
+  - Dietary badges (Vegetarian / Non-Veg)  
+  - Expandable ingredient lists  
+  - Nutrition metadata (calories, macros, allergens)  
+- **Enhanced Layout:**  
+  - Sidebar with real-time session statistics  
+  - Cleaner message flow and visual hierarchy  
+  - Improved spacing and readability  
+
+---
+
+### Interface Comparison
+
+### Deliverable 2 — Basic UI
+![D1 Interface](/docs/reference-images/readme/ui.png)
+
+### Deliverable 3 — Polished UI with Cards & Sidebar
+![D2 Interface](/docs/reference-images/readme/updated_ui.png)
+
+
+## System Overview
+
+### Key Features
+
+- **Conversational Memory**  
+  Maintains a sliding window of conversation history, allowing the system to answer follow-up questions by recalling prior context.
+
+- **Resilience Layer**  
+  All AWS Bedrock interactions are protected using an exponential backoff retry mechanism, ensuring reliable operation even during rate limits or transient failures.
+
+- **Multimodal Retrieval**  
+  Powered by joint Amazon Titan embeddings, enabling retrieval of recipes using both text queries and uploaded food images.
+
+- **Enhanced UI**  
+  A polished Streamlit interface featuring visual *Recommendation Cards* with dietary badges, nutrition breakdowns, and real-time session statistics.
+
+- **Query Enhancement (HyDE)**  
+  Automatically expands vague or ambiguous queries (e.g., “something sweet”) into rich semantic descriptors using an LLM before performing vector search.
+
+---
+
+### Tech Stack
+
+- **Language:** Python 3.10  
+- **Orchestration:** LangChain  
+- **Models:** Anthropic Claude 3 Sonnet (Reasoning & Vision), Amazon Titan Embeddings V2  
+- **Database:** FAISS (Local Vector Store)  
+- **Interface:** Streamlit  
+
+
+## Folder Structure
+```
+.
+├── src/
+│   ├── app_improved.py    # Main application entry point (Deliverable 3)
+│   ├── utils_improved.py  # Core RAG logic, memory, and error handling
+│   ├── config.py          # Centralized configuration
+│   ├── app.py             # Deprecated D2 prototype (for reference)
+│   └── utils.py           # Deprecated D2 utils (for reference)
+├── data/
+│   ├── menu_descriptions_data.csv
+│   ├── restaurants_menu_data.csv
+│   └── images/            # Recipe image assets
+├── output/
+│   └── faiss_index/       # Serialized vector store
+└── requirements.txt
+```
 - `src/`: Streamlit user interface, orchestration logic, and utility helpers.
 - `data/`: Sample restaurant menus, recipe descriptions, and associated food images used to seed the vector store.
 - `notebooks/`: Experimentation notebooks for embedding, retrieval, and RAG workflow prototyping.
@@ -31,20 +140,14 @@ Models: Titan Multimodal Embeddings, Claude 3 Sonnet
 - `docs/`: Architecture references and reports for technical planning.
 - `venv/`: Local virtual environment (excluded from deployment builds).
 
-# **Data Description**
+## Data Description
 
 - `data/menu_descriptions_data.csv`: Cleaned textual descriptions for each recipe, including flavor notes, dietary tags, and serving metadata.
 - `data/restaurants_menu_data.csv`: Structured menu information that links restaurant, recipe, price, and category details.
 - `data/images/R00X/*.png`: Five representative food images per recipe, used to train and evaluate multimodal retrieval (e.g., `R001M001.png` corresponds to recipe `R001`).
 
-# **Architecture Diagram**
-![image](./docs/reference-images/notebook/architecture.png)
 
-# **UI**
-![image](./docs/reference-images/readme/ui.png)
-
-
-# **Execution Instructions**
+## Execution Instructions
 
 1. Request Model Access on AWS Bedrock
 2. Data Setup - Use the provided data to create s3 storage or directly use from local folder.
